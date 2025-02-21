@@ -2,7 +2,13 @@
 
 namespace MovieManager.Services
 {
-    public abstract class BaseService
+    public interface IBaseService
+    {
+        void SaveContext();
+        Task SaveContextAsync();
+    }
+
+    public class BaseService : IBaseService
     {
         protected ApiContext _context {  get; set; }
 
@@ -11,12 +17,25 @@ namespace MovieManager.Services
             _context = new ApiContext();
         }
 
-        protected void SaveContext()
+        public void SaveContext()
         {
             try
             {
                 _context.SaveChanges();
-            } catch {
+            } 
+            catch {
+                throw new Exception("Encountered error while saving changes");
+            }
+        }
+
+        public async Task SaveContextAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
                 throw new Exception("Encountered error while saving changes");
             }
         }

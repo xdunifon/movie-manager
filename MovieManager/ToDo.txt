@@ -1,6 +1,0 @@
-﻿TODO:
-
-- Get SQLite Client
-- Write create scripts and seed data
-
-- Pull data in vue app

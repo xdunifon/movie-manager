@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieManager.Services;
+using MovieManager.Services.DataServices;
 
 namespace MovieManager.Controllers
 {
@@ -7,15 +7,16 @@ namespace MovieManager.Controllers
     [Route("api/movies")]
     public class MovieController : ControllerBase
     {
-        private IMovieService _movieService;
+        private readonly IMovieService _movieService;
 
-        public MovieController()
+        public MovieController(IMovieService movieService)
         {
-            _movieService = new MovieService();
+            _movieService = movieService;
         }
 
-        [HttpGet("", Name = "MoviesIndex")]
-        public IActionResult MoviesIndex()
+        #region GET
+        [HttpGet("", Name = "Movie_GetMovies")]
+        public IActionResult GetMovies()
         {
             var movies = _movieService.GetMovies();
             if (movies == null || movies.Length == 0)
@@ -26,40 +27,14 @@ namespace MovieManager.Controllers
             return Ok(movies);
         }
 
-        [HttpGet("table")]
-        public IActionResult MoviesTable()
-        {
-            var movies = _movieService.GetMovieTableVMs();
-            if (movies == null || movies.Length == 0)
-            {
-                return NotFound();
-            }
-
-            return Ok(movies);
-        }
-
-
-        [HttpGet("{id}", Name = "GetMovieById")]
+        [HttpGet("{id}", Name = "Movie_GetMovieById")]
         public IActionResult GetMovieById(int id)
         {
-            return Ok(_movieService.GetMovie(id));
-        }
+            var movie = _movieService.GetMovie(id);
+            if (movie == null) { return NotFound(); }
 
-        [HttpGet("genres")]
-        public IActionResult GetGenres()
-        {
-            var genres = _movieService.GetGenres();
-            if (genres == null || genres.Length == 0)
-            {
-                return NotFound();
-            }
-            return Ok(genres);
+            return Ok(movie);
         }
-
-        [HttpGet("genres/{id}")]
-        public IActionResult GetGenreById(int id)
-        {
-            return Ok(_movieService.GetGenre(id));
-        }
+        #endregion
     }
 }
