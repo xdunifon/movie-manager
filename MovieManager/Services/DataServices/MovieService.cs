@@ -8,8 +8,8 @@ namespace MovieManager.Services.DataServices
 {
     public interface IMovieService : IBaseService
     {
-        MovieDisplayDto? GetMovie(int id);
-        MovieDisplayDto[] GetMovies();
+        Task<MovieDisplayDto?> GetMovie(int id);
+        Task<MovieDisplayDto[]> GetMovies();
     }
 
     public class MovieService : BaseService, IMovieService
@@ -21,20 +21,20 @@ namespace MovieManager.Services.DataServices
             _mapper = mapper;
         }
 
-        public MovieDisplayDto? GetMovie(int id)
+        public async Task<MovieDisplayDto?> GetMovie(int id)
         {
-            Movie? movie = _context.Movies.Find(id);
+            Movie? movie = await _context.Movies.FindAsync(id);
             if (movie == null) return null;
 
             return _mapper.Map<MovieDisplayDto>(movie);
         }
 
-        public MovieDisplayDto[] GetMovies()
+        public async Task<MovieDisplayDto[]> GetMovies()
         {
-            return _context.Movies
+            return await _context.Movies
                 .Where(movie => movie.Active)
                 .Include(movie => movie.Genre)
-                .Select(movie => _mapper.Map<MovieDisplayDto>(movie)).ToArray();
+                .Select(movie => _mapper.Map<MovieDisplayDto>(movie)).ToArrayAsync();
         }
     }
 }

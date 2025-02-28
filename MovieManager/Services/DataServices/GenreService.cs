@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MovieManager.Models.Database;
 using MovieManager.Models.Dtos.Genre;
 
@@ -6,8 +7,8 @@ namespace MovieManager.Services.DataServices
 {
     public interface IGenreService : IBaseService
     {
-        GenreDto?[] GetGenres();
-        GenreDto? GetGenreById(int id);
+        Task<GenreDto?[]> GetGenres();
+        Task<GenreDto?> GetGenreById(int id);
     }
     public class GenreService : BaseService, IGenreService
     {
@@ -18,18 +19,18 @@ namespace MovieManager.Services.DataServices
             _mapper = mapper;
         }
 
-        public GenreDto? GetGenreById(int id)
+        public async Task<GenreDto?> GetGenreById(int id)
         {
-            Genre? genre = _context.Genres.Find(id);
+            Genre? genre = await _context.Genres.FindAsync(id);
             if (genre == null) { return null; }
 
             return _mapper.Map<GenreDto>(genre);
         }
 
-        public GenreDto?[] GetGenres()
+        public async Task<GenreDto?[]> GetGenres()
         {
-            return _context.Genres
-                .Select(genre => _mapper.Map<GenreDto>(genre)).ToArray();
+            return await _context.Genres
+                .Select(genre => _mapper.Map<GenreDto>(genre)).ToArrayAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MovieManager.Models.Dtos.Movie;
 using MovieManager.Services.DataServices;
 
 namespace MovieManager.Controllers
@@ -16,21 +17,18 @@ namespace MovieManager.Controllers
 
         #region GET
         [HttpGet("", Name = "Movie_GetMovies")]
-        public IActionResult GetMovies()
+        public async Task<IActionResult> GetMovies()
         {
-            var movies = _movieService.GetMovies();
-            if (movies == null || movies.Length == 0)
-            {
-                return NotFound();
-            }
+            MovieDisplayDto[]? movies = await _movieService.GetMovies();
+            if (movies == null) { return NotFound(); }
 
             return Ok(movies);
         }
 
         [HttpGet("{id}", Name = "Movie_GetMovieById")]
-        public IActionResult GetMovieById(int id)
+        public async Task<IActionResult> GetMovieById(int id)
         {
-            var movie = _movieService.GetMovie(id);
+            MovieDisplayDto? movie = await _movieService.GetMovie(id);
             if (movie == null) { return NotFound(); }
 
             return Ok(movie);

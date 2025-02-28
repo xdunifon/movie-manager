@@ -16,21 +16,18 @@ namespace MovieManager.Controllers
 
         #region GET
         [HttpGet("", Name = "Genre_GetGenres")]
-        public IActionResult GetGenres()
+        public async Task<IActionResult> GetGenres()
         {
-            var genres = _genreService.GetGenres();
-            if (genres == null || genres.Length == 0)
-            {
-                return NotFound();
-            }
+            var genres = await _genreService.GetGenres();
+            if (genres == null) { return NotFound(); }
 
             return Ok(genres);
         }
 
         [HttpGet("{id}", Name = "Genre_GetGenre")]
-        public IActionResult GetGenreById(int id)
+        public async Task<IActionResult> GetGenreById(int id)
         {
-            var genre = _genreService.GetGenreById(id);
+            var genre = await _genreService.GetGenreById(id);
             if (genre == null) { return NotFound(); }
 
             return Ok(genre);
